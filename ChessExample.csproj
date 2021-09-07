@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ChessExample\**" />
+    <EmbeddedResource Remove="ChessExample\**" />
+    <None Remove="ChessExample\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="img\Black Bishop.png" />
+    <None Remove="img\Black King.png" />
+    <None Remove="img\Black Knight.png" />
+    <None Remove="img\Black Pawn.png" />
+    <None Remove="img\Black Queen.png" />
+    <None Remove="img\Black Rook.png" />
+    <None Remove="img\Dark Square.png" />
+    <None Remove="img\Light Square.png" />
+    <None Remove="img\White Bishop.png" />
+    <None Remove="img\White King.png" />
+    <None Remove="img\White Knight.png" />
+    <None Remove="img\White Pawn.png" />
+    <None Remove="img\White Queen.png" />
+    <None Remove="img\White Rook.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="img\Black Bishop.png" />
+    <EmbeddedResource Include="img\Black King.png" />
+    <EmbeddedResource Include="img\Black Knight.png" />
+    <EmbeddedResource Include="img\Black Pawn.png" />
+    <EmbeddedResource Include="img\Black Rook.png" />
+    <EmbeddedResource Include="img\Black Queen.png" />
+    <EmbeddedResource Include="img\Dark Square.png" />
+    <EmbeddedResource Include="img\Light Square.png" />
+    <EmbeddedResource Include="img\White Bishop.png" />
+    <EmbeddedResource Include="img\White King.png" />
+    <EmbeddedResource Include="img\White Knight.png" />
+    <EmbeddedResource Include="img\White Pawn.png" />
+    <EmbeddedResource Include="img\White Queen.png" />
+    <EmbeddedResource Include="img\White Rook.png" />
+  </ItemGroup>
+
+</Project>

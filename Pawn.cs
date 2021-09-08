@@ -6,8 +6,6 @@ namespace ChessExample
 {
     public class Pawn : Piece
     {
-        private Piece promotedPiece;
-
         public bool WasMoved
         {
             get
@@ -16,12 +14,8 @@ namespace ChessExample
             }
         }
 
-        public Piece PromotedPiece
+        public Pawn(ChessLogic logic, PieceColor color) : base(logic, color)
         {
-            get
-            {
-                return promotedPiece;
-            }
         }
 
         public Pawn(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color)
@@ -30,12 +24,6 @@ namespace ChessExample
 
         internal override void GenerateMoveList(List<Cell> moveList, bool checkCheck)
         {
-            if (promotedPiece != null)
-            {
-                promotedPiece.GenerateMoveList(moveList, checkCheck);
-                return;
-            }
-
             Cell src = Position; // agora sei onde estou
 
             // verifica se tem movimento (sem captura)
@@ -103,12 +91,6 @@ namespace ChessExample
 
         internal override void UnsafeMove(Cell position)
         {
-            if (promotedPiece != null)
-            {
-                promotedPiece.UnsafeMove(position);
-                return;
-            }
-
             Cell src = Position;
 
             bool enPassant = false;
@@ -126,10 +108,7 @@ namespace ChessExample
                 Cell captured = new Cell(src.Row, position.Col);
                 Piece other = logic.board[captured.Row, captured.Col];
                 if (other != null)
-                {
-                    other.alive = false;
-                    logic.pieces[(int)other.Color].Remove(other);
-                }
+                    other.RemoveFromBoard();
 
                 logic.board[captured.Row, captured.Col] = null;                          
             }
@@ -151,7 +130,7 @@ namespace ChessExample
 
         private void PromoteTo(Piece piece)
         {
-            promotedPiece = piece;
+            piece.SetPosition(Position);
             logic.pawnToPromote = null;
             logic.SwapColor();
             logic.GenerateMoveList();
@@ -160,25 +139,25 @@ namespace ChessExample
         public void PromoteToRook()
         {
             if (logic.PawnToPromote == this)
-                PromoteTo(new Rook(logic, Position, Color));
+                PromoteTo(new Rook(logic, Color));
         }
 
         public void PromoteToKnight()
         {
             if (logic.PawnToPromote == this)
-                PromoteTo(new Rook(logic, Position, Color));
+                PromoteTo(new Knight(logic, Color));
         }
 
         public void PromoteToBishop()
         {
             if (logic.PawnToPromote == this)
-                PromoteTo(new Rook(logic, Position, Color));
+                PromoteTo(new Bishop(logic, Color));
         }
 
         public void PromoteToQueen()
         {
             if (logic.PawnToPromote == this)
-                PromoteTo(new Rook(logic, Position, Color));
+                PromoteTo(new Queen(logic, Color));
         }
     }
 }

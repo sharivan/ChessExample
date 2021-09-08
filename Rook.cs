@@ -16,8 +16,14 @@ namespace ChessExample
             }
         }
 
+        public Rook(ChessLogic logic, PieceColor color) : base(logic, color)
+        {
+            wasMoved = false;
+        }
+
         public Rook(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color)
         {
+            wasMoved = false;
         }
 
         internal override void GenerateMoveList(List<Cell> moveList, bool checkCheck)

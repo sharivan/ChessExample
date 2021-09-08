@@ -6,9 +6,12 @@ namespace ChessExample
 {
     public class Queen : Piece
     {
+        public Queen(ChessLogic logic, PieceColor color) : base(logic, color)
+        {
+        }
+
         public Queen(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color)
         {
-
         }
 
         internal override void GenerateMoveList(List<Cell> moveList, bool checkCheck)

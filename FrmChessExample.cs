@@ -120,13 +120,7 @@ namespace ChessExample
             if (piece.Color == PieceColor.WHITE)
             {
                 if (piece is Pawn)
-                {
-                    Piece promoted = ((Pawn) piece).PromotedPiece;
-                    if (promoted != null)
-                        DrawPiece(g, promoted);
-                    else
-                        g.DrawImage(whitePawnImg, p);
-                }
+                    g.DrawImage(whitePawnImg, p);
                 else if (piece is Rook)
                     g.DrawImage(whiteRookImg, p);
                 else if (piece is Knight)
@@ -141,13 +135,7 @@ namespace ChessExample
             else
             {
                 if (piece is Pawn)
-                {
-                    Piece promoted = ((Pawn) piece).PromotedPiece;
-                    if (promoted != null)
-                        DrawPiece(g, promoted);
-                    else
-                        g.DrawImage(blackPawnImg, p);
-                }
+                    g.DrawImage(blackPawnImg, p);
                 else if (piece is Rook)
                     g.DrawImage(blackRookImg, p);
                 else if (piece is Knight)

@@ -53,16 +53,22 @@ namespace ChessExample
             }
         }
 
+        protected Piece(ChessLogic logic, PieceColor color) : this(logic, Cell.INVALID_CELL, color)
+        {
+        }
+
         protected Piece(ChessLogic logic, Cell position, PieceColor color)
         {
             this.logic = logic;
-            this.position = position;
+            this.position = Cell.INVALID_CELL;
             this.color = color;
 
             moveListGenerated = false;
-            alive = true;
-
             moveList = new List<Cell>();
+
+            alive = false;
+
+            SetPosition(position);
         }
 
         internal abstract void GenerateMoveList(List<Cell> moveList, bool checkCheck);
@@ -96,17 +102,7 @@ namespace ChessExample
 
         internal virtual void UnsafeMove(Cell position)
         {
-            logic.board[this.position.Row, this.position.Col] = null;
-            this.position = position;
-
-            Piece other = logic.GetPiece(position);
-            if (other != null)
-            {
-                other.alive = false;
-                logic.pieces[(int)other.Color].Remove(other);
-            }
-
-            logic.board[position.Row, position.Col] = this;
+            SetPosition(position);
             logic.SwapColor();  
         }
 
@@ -143,31 +139,44 @@ namespace ChessExample
                 moveList.Add(dst);
         }
 
+        internal void RemoveFromBoard()
+        {
+            if (alive)
+            {               
+                alive = false;
+                position = Cell.INVALID_CELL;
+                logic.pieces[(int)color].Remove(this);
+            }
+        }
+
         internal void SetPosition(Cell position)
         {
-            if (logic.IsValidPosition(this.position))
+            if (this.position.Valid)
                 logic.board[this.position.Row, this.position.Col] = null;
 
             this.position = position;
 
-            if (logic.IsValidPosition(position))
+            if (position.Valid)
+            {
+                Piece oldPiece = logic.GetPiece(position);
+                if (oldPiece != null)
+                    oldPiece.RemoveFromBoard();
+
                 logic.board[position.Row, position.Col] = this;
+
+                if (!alive)
+                {
+                    alive = true;
+                    logic.pieces[(int) color].Add(this);
+                }
+            }
+            else
+                RemoveFromBoard();
         }
 
         internal void SetPosition(int row, int col)
         {
             SetPosition(new Cell(row, col));
-        }
-
-        internal void SetPositionAndTurnAlive(Cell position)
-        {
-            SetPosition(position);
-            alive = true;
-        }
-
-        internal void SetPositionAndTurnAlive(int row, int col)
-        {
-            SetPositionAndTurnAlive(new Cell(row, col));
         }
     }
 }

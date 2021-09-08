@@ -16,6 +16,11 @@ namespace ChessExample
             }
         }
 
+        public King(ChessLogic logic, PieceColor color) : base(logic, color)
+        {
+            wasMoved = false;
+        }
+
         public King(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color)
         {
             wasMoved = false;

@@ -112,59 +112,59 @@ namespace ChessExample
 
             // cria os peões brancos
             for (int col = 0; col < 8; col++)
-                pawns[0, col] = new Pawn(this, new Cell(6, col), PieceColor.WHITE);
+                pawns[0, col] = new Pawn(this, PieceColor.WHITE);
 
             // cria os peões negros
             for (int col = 0; col < 8; col++)
-                pawns[1, col] = new Pawn(this, new Cell(1, col), PieceColor.BLACK);
+                pawns[1, col] = new Pawn(this, PieceColor.BLACK);
 
             // cria as torrres brancas
-            rooks[0, 0] = new Rook(this, new Cell(7, 0), PieceColor.WHITE);
-            rooks[0, 1] = new Rook(this, new Cell(7, 7), PieceColor.WHITE);
+            rooks[0, 0] = new Rook(this, PieceColor.WHITE);
+            rooks[0, 1] = new Rook(this, PieceColor.WHITE);
 
             // cria as torrres negras
-            rooks[1, 0] = new Rook(this, new Cell(0, 0), PieceColor.BLACK);
-            rooks[1, 1] = new Rook(this, new Cell(0, 7), PieceColor.BLACK);
+            rooks[1, 0] = new Rook(this, PieceColor.BLACK);
+            rooks[1, 1] = new Rook(this, PieceColor.BLACK);
 
             // cria os cavalos brancos
-            knights[0, 0] = new Knight(this, new Cell(7, 1), PieceColor.WHITE);
-            knights[0, 1] = new Knight(this, new Cell(7, 6), PieceColor.WHITE);
+            knights[0, 0] = new Knight(this, PieceColor.WHITE);
+            knights[0, 1] = new Knight(this, PieceColor.WHITE);
 
             // cria os cavalos negros
-            knights[1, 0] = new Knight(this, new Cell(0, 1), PieceColor.BLACK);
-            knights[1, 1] = new Knight(this, new Cell(0, 6), PieceColor.BLACK);
+            knights[1, 0] = new Knight(this, PieceColor.BLACK);
+            knights[1, 1] = new Knight(this, PieceColor.BLACK);
 
             // cria os bispos brancos
-            bishops[0, 0] = new Bishop(this, new Cell(7, 2), PieceColor.WHITE);
-            bishops[0, 1] = new Bishop(this, new Cell(7, 5), PieceColor.WHITE);
+            bishops[0, 0] = new Bishop(this, PieceColor.WHITE);
+            bishops[0, 1] = new Bishop(this, PieceColor.WHITE);
 
             // cria os bispos negros
-            bishops[1, 0] = new Bishop(this, new Cell(0, 2), PieceColor.BLACK);
-            bishops[1, 1] = new Bishop(this, new Cell(0, 5), PieceColor.BLACK);
+            bishops[1, 0] = new Bishop(this, PieceColor.BLACK);
+            bishops[1, 1] = new Bishop(this, PieceColor.BLACK);
 
             // cria a dama branca
-            queens[0] = new Queen(this, new Cell(7, 3), PieceColor.WHITE);
+            queens[0] = new Queen(this, PieceColor.WHITE);
 
             // cria o rei branco
-            kings[0] = new King(this, new Cell(7, 4), PieceColor.WHITE);
+            kings[0] = new King(this, PieceColor.WHITE);
 
             // cria a dama negra
-            queens[1] = new Queen(this, new Cell(0, 3), PieceColor.BLACK);
+            queens[1] = new Queen(this, PieceColor.BLACK);
 
             // cria o rei negro
-            kings[1] = new King(this, new Cell(0, 4), PieceColor.BLACK);
+            kings[1] = new King(this, PieceColor.BLACK);
 
             Reset();
         }
 
         public bool IsValidPosition(int row, int col)
         {
-            return 0 <= row && row < 8 && 0 <= col && col < 8;
+            return IsValidPosition(new Cell(row, col));
         }
 
         public bool IsValidPosition(Cell position)
         {
-            return IsValidPosition(position.Row, position.Col);
+            return position.Valid;
         }
 
         public Piece GetPiece(int row, int col)
@@ -191,7 +191,18 @@ namespace ChessExample
         {
             for (int row = 0; row < 8; row++)
                 for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = board[row, col];
+                    if (piece != null)
+                    {
+                        piece.alive = false;
+                        piece.position = Cell.INVALID_CELL;
+                        piece.moveListGenerated = false;
+                        piece.moveList.Clear();
+                    }
+
                     board[row, col] = null;
+                }
 
             pieces[0].Clear();
             pieces[1].Clear();
@@ -208,62 +219,53 @@ namespace ChessExample
 
             // reseta as posições dos peões brancos
             for (int col = 0; col < 8; col++)
-                pawns[0, col].SetPositionAndTurnAlive(6, col);
+                pawns[0, col].SetPosition(6, col);
 
             // reseta as posições dos peões negros
             for (int col = 0; col < 8; col++)
-                pawns[1, col].SetPositionAndTurnAlive(1, col);
+                pawns[1, col].SetPosition(1, col);
 
             // reseta as posiçõe das torrres brancas
-            rooks[0, 0].SetPositionAndTurnAlive(7, 0);
+            rooks[0, 0].SetPosition(7, 0);
             rooks[0, 0].wasMoved = false;
-            rooks[0, 1].SetPositionAndTurnAlive(7, 7);
+            rooks[0, 1].SetPosition(7, 7);
             rooks[0, 1].wasMoved = false;
 
             // reseta as posiçõe das torrres negras
-            rooks[1, 0].SetPositionAndTurnAlive(0, 0);
+            rooks[1, 0].SetPosition(0, 0);
             rooks[1, 0].wasMoved = false;
-            rooks[1, 1].SetPositionAndTurnAlive(0, 7);
+            rooks[1, 1].SetPosition(0, 7);
             rooks[1, 1].wasMoved = false;
 
             // reseta as posiçõe dos cavalos brancos
-            knights[0, 0].SetPositionAndTurnAlive(7, 1);
-            knights[0, 1].SetPositionAndTurnAlive(7, 6);
+            knights[0, 0].SetPosition(7, 1);
+            knights[0, 1].SetPosition(7, 6);
 
             // reseta as posiçõe dos cavalos negros
-            knights[1, 0].SetPositionAndTurnAlive(0, 1);
-            knights[1, 1].SetPositionAndTurnAlive(0, 6);
+            knights[1, 0].SetPosition(0, 1);
+            knights[1, 1].SetPosition(0, 6);
 
             // reseta as posiçõe dos bispos brancos
-            bishops[0, 0].SetPositionAndTurnAlive(7, 2);
-            bishops[0, 1].SetPositionAndTurnAlive(7, 5);
+            bishops[0, 0].SetPosition(7, 2);
+            bishops[0, 1].SetPosition(7, 5);
 
             // reseta as posiçõe dos bispos negros
-            bishops[1, 0].SetPositionAndTurnAlive(0, 2);
-            bishops[1, 1].SetPositionAndTurnAlive(0, 5);
+            bishops[1, 0].SetPosition(0, 2);
+            bishops[1, 1].SetPosition(0, 5);
 
             // reseta a posição da dama branca
-            queens[0].SetPositionAndTurnAlive(7, 3);
+            queens[0].SetPosition(7, 3);
 
             // reseta a posição do rei branco
-            kings[0].SetPositionAndTurnAlive(7, 4);
+            kings[0].SetPosition(7, 4);
             kings[0].wasMoved = false;
 
             // reseta a posição da dama negro
-            queens[1].SetPositionAndTurnAlive(0, 3);
+            queens[1].SetPosition(0, 3);
 
             // reseta a posição do rei negro
-            kings[1].SetPositionAndTurnAlive(0, 4);
+            kings[1].SetPosition(0, 4);
             kings[1].wasMoved = false;
-
-
-            for (int row = 0; row < 2; row++)
-                for (int col = 0; col < 8; col++)
-                    pieces[1].Add(board[row, col]);
-
-            for (int row = 6; row < 8; row++)
-                for (int col = 0; col < 8; col++)
-                    pieces[0].Add(board[row, col]);
 
             GenerateMoveList();
         }
@@ -385,6 +387,7 @@ namespace ChessExample
             // salva o estado atual do tabuleiro
             bool pawnWalkedTwoRows = this.pawnWalkedTwoRows;
             int pawnCol = this.pawnCol;
+            Pawn pawnToPromote = this.pawnToPromote;
 
             for (int row = 0; row < 8; row++)
                 for (int col = 0; col < 8; col++)
@@ -423,6 +426,7 @@ namespace ChessExample
             // voltar pro estado anterior do tabieleiro
             this.pawnWalkedTwoRows = pawnWalkedTwoRows;
             this.pawnCol = pawnCol;
+            this.pawnToPromote = pawnToPromote;
 
             for (int row = 0; row < 8; row++)
                 for (int col = 0; col < 8; col++)

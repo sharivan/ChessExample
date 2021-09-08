@@ -6,6 +6,10 @@ namespace ChessExample
 {
     public class Bishop : Piece
     {
+        public Bishop(ChessLogic logic, PieceColor color) : base(logic, color)
+        {
+        }
+
         public Bishop(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color)
         {
         }

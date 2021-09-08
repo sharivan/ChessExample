@@ -6,6 +6,8 @@ namespace ChessExample
 {
     public struct Cell
     {
+        public static readonly Cell INVALID_CELL = new Cell(-1, -1);
+
         private int row;
         private int col;
 
@@ -22,6 +24,14 @@ namespace ChessExample
             get
             {
                 return col;
+            }
+        }
+
+        public bool Valid 
+        {
+            get
+            {
+                return row >= 0 && row < 8 && col >= 0 && col < 8;
             }
         }
 

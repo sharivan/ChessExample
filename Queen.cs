@@ -24,7 +24,7 @@ namespace ChessExample
                 {
                     for (int counter = 1; counter < 8; counter++)
                     {
-                        Cell dst = new Cell(src.Row + dx * counter, src.Col + dy * counter);
+                        var dst = new Cell(src.Row + dx * counter, src.Col + dy * counter);
                         if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                             break;
 
@@ -49,7 +49,7 @@ namespace ChessExample
             {
                 for (int counter = 1; counter < 8; counter++)
                 {
-                    Cell dst = new Cell(src.Row + dx * counter, src.Col); // fixa a coluna e varia a linha
+                    var dst = new Cell(src.Row + dx * counter, src.Col); // fixa a coluna e varia a linha
                     if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                         break;
 
@@ -74,7 +74,7 @@ namespace ChessExample
             {
                 for (int counter = 1; counter < 8; counter++)
                 {
-                    Cell dst = new Cell(src.Row, src.Col + dy * counter); // fixa a linha e varia a coluna
+                    var dst = new Cell(src.Row, src.Col + dy * counter); // fixa a linha e varia a coluna
                     if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                         break;
 

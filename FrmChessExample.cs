@@ -42,27 +42,16 @@ namespace ChessExample
         private int dx;
         private int dy;
 
-        public FrmChessExample()
-        {
-            InitializeComponent();
-        }
+        public FrmChessExample() => InitializeComponent();
 
-        private Point CellToPoint(int row, int col)
-        {
-            return new Point(CELL_SIZE * col, CELL_SIZE * row);
-        }
+        private Point CellToPoint(int row, int col) => new Point(CELL_SIZE * col, CELL_SIZE * row);
 
-        private Point CellToPoint(Cell position)
-        {
-            return CellToPoint(position.Row, position.Col);
-        }
+        private Point CellToPoint(Cell position) => CellToPoint(position.Row, position.Col);
 
         public Image GetImage(string name)
         {
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
-            {
-                return Image.FromStream(stream);
-            }
+            using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
+            return Image.FromStream(stream);
         }
 
         private void CreateBoard()
@@ -88,7 +77,6 @@ namespace ChessExample
             blackQueenImg = GetImage("ChessExample.img.Black Queen.png");
             blackKingImg = GetImage("ChessExample.img.Black King.png");
 
-
             //RefreshGameState();
         }
 
@@ -98,11 +86,8 @@ namespace ChessExample
                 for (int j = 0; j < pieces[i].Count; j++)
                 {
                     PictureBox picture = pieces[i][j];
-                    Piece piece = picture.Tag as Piece;
-                    if (piece.alive)
-                        picture.Location = new Point(-CELL_SIZE, 0);
-                    else
-                        picture.Location = CellToPoint(piece.position);
+                    var piece = picture.Tag as Piece;
+                    picture.Location = piece.alive ? new Point(-CELL_SIZE, 0) : CellToPoint(piece.position);
                 }
         }
 
@@ -149,10 +134,7 @@ namespace ChessExample
             }
         }
 
-        private void DrawPiece(Graphics g, Piece piece)
-        {
-            DrawPiece(g, piece, CellToPoint(piece.Position));
-        }
+        private void DrawPiece(Graphics g, Piece piece) => DrawPiece(g, piece, CellToPoint(piece.Position));
 
         private void FrmChessExample_Paint(object sender, PaintEventArgs e)
         {
@@ -184,7 +166,7 @@ namespace ChessExample
                 int row = mousePos.Y / CELL_SIZE;
                 int col = mousePos.X / CELL_SIZE;
 
-                using (Pen pen = new Pen(Color.Blue, 2))
+                using (var pen = new Pen(Color.Blue, 2))
                 {
                     Point p = CellToPoint(row, col);
                     g.DrawRectangle(pen, new Rectangle(p.X, p.Y, CELL_SIZE, CELL_SIZE));
@@ -201,11 +183,9 @@ namespace ChessExample
                         {
                             Cell position = moveList[i];
 
-                            using (Pen pen = new Pen(Color.Red, 2))
-                            {
-                                Point p = CellToPoint(position);
-                                g.DrawRectangle(pen, new Rectangle(p.X, p.Y, CELL_SIZE, CELL_SIZE));
-                            }
+                            using var pen = new Pen(Color.Red, 2);
+                            Point p = CellToPoint(position);
+                            g.DrawRectangle(pen, new Rectangle(p.X, p.Y, CELL_SIZE, CELL_SIZE));
                         }
                     }
                 }
@@ -250,7 +230,7 @@ namespace ChessExample
 
                 int row = y / CELL_SIZE;
                 int col = x / CELL_SIZE;
-                Cell dst = new Cell(row, col);
+                var dst = new Cell(row, col);
 
                 if (logic.IsValidPosition(row, col))
                 {

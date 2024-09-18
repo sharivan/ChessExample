@@ -16,15 +16,9 @@ namespace ChessExample
             }
         }
 
-        public Rook(ChessLogic logic, PieceColor color) : base(logic, color)
-        {
-            wasMoved = false;
-        }
+        public Rook(ChessLogic logic, PieceColor color) : base(logic, color) => wasMoved = false;
 
-        public Rook(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color)
-        {
-            wasMoved = false;
-        }
+        public Rook(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color) => wasMoved = false;
 
         internal override void GenerateMoveList(List<Cell> moveList, bool checkCheck)
         {
@@ -35,7 +29,7 @@ namespace ChessExample
             {
                 for (int counter = 1; counter < 8; counter++)
                 {
-                    Cell dst = new Cell(src.Row + dx * counter, src.Col); // fixa a coluna e varia a linha
+                    var dst = new Cell(src.Row + dx * counter, src.Col); // fixa a coluna e varia a linha
                     if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                         break;
 
@@ -60,7 +54,7 @@ namespace ChessExample
             {
                 for (int counter = 1; counter < 8; counter++)
                 {
-                    Cell dst = new Cell(src.Row, src.Col + dy * counter); // fixa a linha e varia a coluna
+                    var dst = new Cell(src.Row, src.Col + dy * counter); // fixa a linha e varia a coluna
                     if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                         break;
 

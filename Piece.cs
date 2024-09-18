@@ -95,14 +95,13 @@ namespace ChessExample
             return moveList.ToArray();
         }
 
-        public bool IsEnemy(Piece other)
-        {
-            return color != other.color;
-        }
+        public bool IsEnemy(Piece other) => color != other.color;
 
         internal virtual void UnsafeMove(Cell position)
         {
-            SetPosition(position);
+            if (SetPosition(position))
+                logic.captured = true;
+
             logic.SwapColor();  
         }
 
@@ -114,6 +113,11 @@ namespace ChessExample
             logic.pawnWalkedTwoRows = false;
             UnsafeMove(position);
 
+            if (!logic.captured && !logic.pawnMoved)
+                logic.movesToDraw--;
+            else
+                logic.movesToDraw = ChessLogic.MOVES_TO_DRAW;
+
             if (logic.PawnToPromote == null)
                 logic.GenerateMoveList();
             else
@@ -122,16 +126,11 @@ namespace ChessExample
             return true;
         }
 
-        public bool IsAttacking(Cell position)
-        {
+        public bool IsAttacking(Cell position) =>
             //GenerateMoveList();
-            return moveList.Contains(position);
-        }
+            moveList.Contains(position);
 
-        public bool IsAttacking(int row, int col)
-        {
-            return IsAttacking(new Cell(row, col));
-        }
+        public bool IsAttacking(int row, int col) => IsAttacking(new Cell(row, col));
 
         protected void CheckCheckAndAdd(List<Cell> moveList, Cell src, Cell dst, bool checkCheck)
         {
@@ -149,8 +148,10 @@ namespace ChessExample
             }
         }
 
-        internal void SetPosition(Cell position)
+        internal bool SetPosition(Cell position)
         {
+            bool replaced = false;
+
             if (this.position.Valid)
                 logic.board[this.position.Row, this.position.Col] = null;
 
@@ -160,7 +161,10 @@ namespace ChessExample
             {
                 Piece oldPiece = logic.GetPiece(position);
                 if (oldPiece != null)
+                {
+                    replaced = true;
                     oldPiece.RemoveFromBoard();
+                }
 
                 logic.board[position.Row, position.Col] = this;
 
@@ -172,11 +176,10 @@ namespace ChessExample
             }
             else
                 RemoveFromBoard();
+
+            return replaced;
         }
 
-        internal void SetPosition(int row, int col)
-        {
-            SetPosition(new Cell(row, col));
-        }
+        internal void SetPosition(int row, int col) => SetPosition(new Cell(row, col));
     }
 }

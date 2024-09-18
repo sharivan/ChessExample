@@ -6,6 +6,9 @@ namespace ChessExample
 {
     public class ChessLogic
     {
+        internal const int MOVES_TO_DRAW = 50;
+        internal const int REPEATED_MOVES_TO_DRAW = 3;
+
         private Piece[,] oldBoard;
         internal Piece[,] board;
         private PieceColor currentTurn;
@@ -26,6 +29,10 @@ namespace ChessExample
         internal bool pawnWalkedTwoRows;
         internal int pawnCol;
         internal Pawn pawnToPromote;
+        internal int movesToDraw;
+        internal int repeatedMoves;
+        internal bool captured;
+        internal bool pawnMoved;
 
         public PieceColor CurrentTurn
         {
@@ -157,35 +164,17 @@ namespace ChessExample
             Reset();
         }
 
-        public bool IsValidPosition(int row, int col)
-        {
-            return IsValidPosition(new Cell(row, col));
-        }
+        public bool IsValidPosition(int row, int col) => IsValidPosition(new Cell(row, col));
 
-        public bool IsValidPosition(Cell position)
-        {
-            return position.Valid;
-        }
+        public bool IsValidPosition(Cell position) => position.Valid;
 
-        public Piece GetPiece(int row, int col)
-        {
-            return board[row, col];
-        }
+        public Piece GetPiece(int row, int col) => board[row, col];
 
-        public Piece GetPiece(Cell position)
-        {
-            return GetPiece(position.Row, position.Col);
-        }
+        public Piece GetPiece(Cell position) => GetPiece(position.Row, position.Col);
 
-        public bool IsEmpty(int row, int col)
-        {
-            return board[row, col] == null;
-        }
+        public bool IsEmpty(int row, int col) => board[row, col] == null;
 
-        public bool IsEmpty(Cell position)
-        {
-            return IsEmpty(position.Row, position.Col);
-        }
+        public bool IsEmpty(Cell position) => IsEmpty(position.Row, position.Col);
 
         private void Clear()
         {
@@ -214,6 +203,10 @@ namespace ChessExample
             gameOver = false;
             draw = false;
             pawnWalkedTwoRows = false;
+            movesToDraw = MOVES_TO_DRAW;
+            repeatedMoves = 0;
+            captured = false;
+            pawnMoved = false;
 
             Clear();
 
@@ -270,55 +263,25 @@ namespace ChessExample
             GenerateMoveList();
         }
 
-        public PieceColor GetOtherColor(PieceColor color)
-        {
-            return color == PieceColor.BLACK ? PieceColor.WHITE : PieceColor.BLACK;
-        }
+        public PieceColor GetOtherColor(PieceColor color) => color == PieceColor.BLACK ? PieceColor.WHITE : PieceColor.BLACK;
 
-        internal void SwapColor()
-        {
-            currentTurn = currentTurn == PieceColor.BLACK ? PieceColor.WHITE : PieceColor.BLACK;
-        }
+        internal void SwapColor() => currentTurn = currentTurn == PieceColor.BLACK ? PieceColor.WHITE : PieceColor.BLACK;
 
-        public Pawn GetPawn(PieceColor color, int index)
-        {
-            return pawns[(int)color, index];
-        }
+        public Pawn GetPawn(PieceColor color, int index) => pawns[(int) color, index];
 
-        public Rook GetRook(PieceColor color, int index)
-        {
-            return rooks[(int)color, index];
-        }
+        public Rook GetRook(PieceColor color, int index) => rooks[(int) color, index];
 
-        public Knight GetKnight(PieceColor color, int index)
-        {
-            return knights[(int)color, index];
-        }
+        public Knight GetKnight(PieceColor color, int index) => knights[(int) color, index];
 
-        public Bishop GetBishop(PieceColor color, int index)
-        {
-            return bishops[(int)color, index];
-        }
+        public Bishop GetBishop(PieceColor color, int index) => bishops[(int) color, index];
 
-        public Queen GetQueen(PieceColor color)
-        {
-            return queens[(int)color];
-        }
+        public Queen GetQueen(PieceColor color) => queens[(int) color];
 
-        public King GetKing(PieceColor color)
-        {
-            return kings[(int) color];
-        }
+        public King GetKing(PieceColor color) => kings[(int) color];
 
-        public int GetPieceCount(PieceColor color)
-        {
-            return pieces[(int) color].Count;
-        }
+        public int GetPieceCount(PieceColor color) => pieces[(int) color].Count;
 
-        public Piece GetPiece(PieceColor color, int index)
-        {
-            return pieces[(int) color][index];
-        }
+        public Piece GetPiece(PieceColor color, int index) => pieces[(int) color][index];
 
         public bool IsAttacked(Cell position, PieceColor color)
         {
@@ -337,6 +300,16 @@ namespace ChessExample
             if (gameOver)
                 return;
 
+            if (movesToDraw <= 0 || repeatedMoves >= REPEATED_MOVES_TO_DRAW)
+            {
+                gameOver = true;
+                draw = true;
+                return;
+            }
+
+            captured = false;
+            pawnMoved = false;
+
             for (int i = 0; i < 2; i++)
                 for (int j = 0; j < pieces[i].Count; j++)
                 {
@@ -354,7 +327,7 @@ namespace ChessExample
             }
 
             King myKing = GetKing(currentTurn);
-            check = myKing.IsCheck();
+            check = myKing.InCheck();
 
             // gera a lista de movimentos de minhas peças
             int moveCount = 0;
@@ -369,7 +342,7 @@ namespace ChessExample
             gameOver = moveCount == 0;
             if (gameOver)
             {
-                draw = !myKing.IsCheck();
+                draw = !myKing.InCheck();
                 if (!draw)
                     winner = GetOtherColor(currentTurn);
             }
@@ -388,6 +361,10 @@ namespace ChessExample
             bool pawnWalkedTwoRows = this.pawnWalkedTwoRows;
             int pawnCol = this.pawnCol;
             Pawn pawnToPromote = this.pawnToPromote;
+            int movesToDraw = this.movesToDraw;
+            int repeatedMoves = this.repeatedMoves;
+            bool captured = this.captured;
+            bool pawnMoved = this.pawnMoved;
 
             for (int row = 0; row < 8; row++)
                 for (int col = 0; col < 8; col++)
@@ -421,12 +398,16 @@ namespace ChessExample
 
             // verifica se ainda está em cheque
             King myKing = GetKing(myColor);
-            bool alreadyInCheck = myKing.IsCheck();
+            bool kingInCheck = myKing.InCheck();
 
             // voltar pro estado anterior do tabieleiro
             this.pawnWalkedTwoRows = pawnWalkedTwoRows;
             this.pawnCol = pawnCol;
             this.pawnToPromote = pawnToPromote;
+            this.movesToDraw = movesToDraw;
+            this.repeatedMoves = repeatedMoves;
+            this.captured = captured;
+            this.pawnMoved = pawnMoved;
 
             for (int row = 0; row < 8; row++)
                 for (int col = 0; col < 8; col++)
@@ -465,7 +446,7 @@ namespace ChessExample
             currentTurn = myColor;
 
             // retorna o resultado
-            return alreadyInCheck;
+            return kingInCheck;
         }
     }
 }

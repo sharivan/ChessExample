@@ -16,15 +16,9 @@ namespace ChessExample
             }
         }
 
-        public King(ChessLogic logic, PieceColor color) : base(logic, color)
-        {
-            wasMoved = false;
-        }
+        public King(ChessLogic logic, PieceColor color) : base(logic, color) => wasMoved = false;
 
-        public King(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color)
-        {
-            wasMoved = false;
-        }
+        public King(ChessLogic logic, Cell position, PieceColor color) : base(logic, position, color) => wasMoved = false;
 
         internal override void GenerateMoveList(List<Cell> moveList, bool checkCheck)
         {
@@ -34,7 +28,7 @@ namespace ChessExample
             for (int dx = -1; dx <= 1; dx += 2)
                 for (int dy = -1; dy <= 1; dy += 2)
                 {
-                    Cell dst = new Cell(src.Row + dx, src.Col + dy);
+                    var dst = new Cell(src.Row + dx, src.Col + dy);
                     if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                         break;
 
@@ -54,7 +48,7 @@ namespace ChessExample
             // verei pra onde vou (direita ou esquerda)
             for (int dx = -1; dx <= 1; dx += 2)
             {
-                Cell dst = new Cell(src.Row + dx, src.Col); // fixa a coluna e varia a linha
+                var dst = new Cell(src.Row + dx, src.Col); // fixa a coluna e varia a linha
                 if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                     continue;
 
@@ -74,7 +68,7 @@ namespace ChessExample
             // verei pra onde vou (cima ou baixo)
             for (int dy = -1; dy <= 1; dy += 2)
             {
-                Cell dst = new Cell(src.Row, src.Col + dy); // fixa a linha e varia a coluna
+                var dst = new Cell(src.Row, src.Col + dy); // fixa a linha e varia a coluna
                 if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                     continue;
 
@@ -92,7 +86,7 @@ namespace ChessExample
             }
 
             // verifica a possibilidade de roque
-            if (wasMoved || (checkCheck ? IsCheck() : false))
+            if (wasMoved || (checkCheck ? InCheck() : false))
                 return;
 
             PieceColor otherColor = logic.OtherColor;
@@ -104,7 +98,7 @@ namespace ChessExample
                 bool valid = true;
                 for (int delta = 1; delta <= 2; delta++)
                 {
-                    Cell path = new Cell(src.Row, src.Col - delta);
+                    var path = new Cell(src.Row, src.Col - delta);
                     if (!logic.IsEmpty(path) || logic.IsAttacked(path, otherColor))
                     {
                         valid = false;
@@ -123,7 +117,7 @@ namespace ChessExample
                 bool valid = true;
                 for (int delta = 1; delta <= 2; delta++)
                 {
-                    Cell path = new Cell(src.Row, src.Col + delta);
+                    var path = new Cell(src.Row, src.Col + delta);
                     if (!logic.IsEmpty(path) || logic.IsAttacked(path, otherColor))
                     {
                         valid = false;
@@ -136,7 +130,7 @@ namespace ChessExample
             }
         }
 
-        public bool IsCheck()
+        public bool InCheck()
         {
             PieceColor otherColor = logic.GetOtherColor(Color);
             Cell position = Position;

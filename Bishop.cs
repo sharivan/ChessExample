@@ -24,7 +24,7 @@ namespace ChessExample
                 {
                     for (int counter = 1; counter < 8; counter++)
                     {
-                        Cell dst = new Cell(src.Row + dx * counter, src.Col + dy * counter);
+                        var dst = new Cell(src.Row + dx * counter, src.Col + dy * counter);
                         if (!logic.IsValidPosition(dst)) // verifica se a posição de destino é válida
                             break;
 

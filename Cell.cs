@@ -41,9 +41,6 @@ namespace ChessExample
             this.col = col;
         }
 
-        public override string ToString()
-        {
-            return "[" + row + ", " + col + "]";
-        }
+        public override string ToString() => "[" + row + ", " + col + "]";
     }
 }

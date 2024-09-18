@@ -28,7 +28,7 @@ namespace ChessExample
 
             // verifica se tem movimento (sem captura)
             int delta = Color == PieceColor.WHITE ? -1 : 1;
-            Cell dst = new Cell(src.Row + delta, src.Col);
+            var dst = new Cell(src.Row + delta, src.Col);
             if (logic.IsEmpty(dst)) // verifica se pode andar uma casa
             {
                 CheckCheckAndAdd(moveList, src, dst, checkCheck);
@@ -91,11 +91,14 @@ namespace ChessExample
 
         internal override void UnsafeMove(Cell position)
         {
+            logic.pawnMoved = true;
+
             Cell src = Position;
 
             bool enPassant = false;
             if (Math.Abs(position.Col - src.Col) == 1) // é uma captura
             {
+                logic.captured = true;
                 Piece piece = logic.GetPiece(position);
                 if (piece == null)
                     enPassant = true;
@@ -105,7 +108,7 @@ namespace ChessExample
 
             if (enPassant)
             {
-                Cell captured = new Cell(src.Row, position.Col);
+                var captured = new Cell(src.Row, position.Col);
                 Piece other = logic.board[captured.Row, captured.Col];
                 if (other != null)
                     other.RemoveFromBoard();

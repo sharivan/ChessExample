@@ -22,7 +22,7 @@ namespace ChessExample
             for (int dx = -1; dx <= 1; dx += 2)
                 for (int dy = -1; dy <= 1; dy += 2)
                 {
-                    Cell dst = new Cell(src.Row + 2 * dx, src.Col + dy);
+                    var dst = new Cell(src.Row + 2 * dx, src.Col + dy);
                     if (logic.IsValidPosition(dst))
                     {
                         if (logic.IsEmpty(dst)) // verifica se a posição de desitno é vazia
